@@ -1,13 +1,24 @@
 <template>
-    <div>
-        <h1>students</h1>
+  <v-layout >
+    <v-flex xm12 md8 offset-md2 lg6 offset-lg3 xl4 offset-xl4>
+      <div v-if="survey==null">
+         <h1>Loading...</h1>
+      </div>
+      <v-card >
         <div v-if="survey">
-            <survey :survey="survey"></survey>
+          <survey :survey="survey"></survey>
         </div>
-        <div v-else>
-            <h3>Loading...</h3>
-        </div>
-    </div>
+
+        <v-card-actions  v-if="surveyInProgress">
+          <v-spacer></v-spacer>
+          <v-btn flat color="orange" v-on:click="navBack">Back</v-btn>
+          <v-btn color="orange white--text" v-on:click="submitSurvey">
+		  Submit Survey
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -20,7 +31,8 @@ export default {
     },
     data: function() {
         return {
-            survey: null
+            survey: null,
+            surveyInProgress: true
         };
     },
 
@@ -41,9 +53,11 @@ export default {
             };
 
             fetch("student_survey.php?" + generate_query_string(url))
-                .then(res => res.json())
-                .then(data => this.parseData(data, this.$route.params.user_id))
-                .catch(err => {
+                .then((res) => res.json())
+                .then((data) =>
+                    this.parseData(data, this.$route.params.user_id)
+                )
+                .catch((err) => {
                     this.$emit("error", err.toString());
                 });
         },
@@ -77,9 +91,10 @@ export default {
             // Creating survey
             this.survey = new Model(json);
 
+            window.surv = this.survey;
             // When survey is completed, responses are stored to corresponding
             // question id
-            this.survey.onComplete.add(function(result) {
+            this.survey.onComplete.add((result) => {
                 let responses = [];
                 for (let [name, response] of Object.entries(result.data)) {
                     responses.push({
@@ -97,7 +112,21 @@ export default {
                 fetch("student_survey.php", {
                     method: "POST",
                     body: JSON.stringify(ret)
-                }).catch(err => this.$emit("error", err.toString()));
+                })
+                    .then((response) => {
+                        this.surveyInProgress = false;
+                    })
+                    .catch((err) => this.$emit("error", err.toString()));
+            });
+        },
+        submitSurvey: function() {
+            this.survey.completeLastPage();
+        },
+        navBack: function() {
+            this.$router.push({
+                path: `/user_id/${this.$route.params.user_id}/override_token/${
+                    this.$route.params.override_token
+                }/student-landing`
             });
         }
     }

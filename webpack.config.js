@@ -39,7 +39,6 @@ module.exports = {
     },
     plugins: [
         new CopyWebpackPlugin([
-            { from: "./handle_request.php", to: "./" },
             { from: "./student_survey.php", to: "./" },
             { from: "./index.html", to: "./" },
             { from: "./survey_query_generators.php", to: "./" },
