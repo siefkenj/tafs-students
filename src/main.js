@@ -4,11 +4,12 @@ import App from "./App.vue";
 // Components
 import Redirect from "./views/redirect.vue";
 import StudentSurveys from "./views/student-surveys.vue";
-import StudentLandingPage from "./views/student-landing.vue";
+import StudentLanding from "./views/student-landing.vue";
+import StudentOverride from "./views/student-override.vue";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 import "vuetify/dist/vuetify.min.css"; // Ensure you are using css-loader
 import Vuetify from "vuetify";
-// Helpers
+// Material Design UI widgets
 Vue.use(Vuetify);
 // Enabling routing
 Vue.use(VueRouter);
@@ -28,11 +29,15 @@ const routes = [
     {
         path:
             "/user_id/:user_id/override_token/:override_token/student-landing",
-        component: StudentLandingPage
+        component: StudentLanding
     },
     {
         path: "/user_id/:user_id/override_token/:override_token/student",
         component: StudentSurveys
+    },
+    {
+        path: "/user_id/:user_id/",
+        component: StudentOverride
     }
 ];
 
