@@ -9,7 +9,7 @@ try {
         $method = $REQUEST_data['REQUEST_METHOD'];
         switch ($method) {
             case "GET":
-                print json_encode(handle_get($REQUEST_data));
+                print json_encode(handle_get($REQUEST_data, $_SERVER));
                 exit();
             case "POST":
                 print json_encode(handle_post($REQUEST_data['post_body']));
@@ -41,13 +41,13 @@ try {
  */
 function get_query_result($query_string, $bind_variables, $post_select = false)
 {
-    require '../db/config.php';
+    require 'tafeedback_secret.php';
     // Attempt to execute sql command and print response in json format.
     // If a sql error occurs, JSON error object.
     try {
         // connect to the mysql database
         $conn = new PDO(
-            "mysql:host=$servername;dbname=$database",
+            "mysql:host=$servername;dbname=$dbname",
             $username,
             $password
         );
@@ -85,7 +85,7 @@ function get_query_result($query_string, $bind_variables, $post_select = false)
  * @throws InvalidPage The requested what does not exist
  * @return package An associative array with type and data requested
  */
-function handle_get($parameters)
+function handle_get($parameters, $server_env_vars)
 {
     $bind_variables = [];
     $role = [];
@@ -107,6 +107,9 @@ function handle_get($parameters)
         case "get_ta":
             $ta_package = get_ta_info($bind_variables);
             return $ta_package;
+        case "get_user_info":
+            $user_info_package = get_user_info($server_env_vars);
+            return $user_info_package;
         default:
             throw new Exception("InvalidPage");
     }
@@ -296,6 +299,17 @@ function post_survey_results($body, $bind_variables)
         );
     }
     return array("TYPE" => "success", "DATA" => $return_val_data);
+}
+
+function get_user_info($server_env_vars)
+{
+    if (!isset($server_env_vars["utorid"])) {
+        throw new Exception("No User Provided");
+    }
+    return array(
+        "TYPE" => "success",
+        "DATA" => ["user_id" => $server_env_vars["utorid"]]
+    );
 }
 /**
  * This function returns an HTTP status corresponding to the result of the
