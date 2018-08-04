@@ -12,7 +12,7 @@ export default {
     created: function() {
         var user_id = "woods13";
         var override_token = "HLF43W";
-        this.$router.replace({ path: `/user_id/${user_id}/override_token/${override_token}/student-landing` });
+        this.$router.push({ path: `/user_id/${user_id}/override_token/${override_token}/student-landing` });
     }
 };
 </script>
