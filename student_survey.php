@@ -107,6 +107,9 @@ function handle_get($parameters)
         case "get_ta":
             $ta_package = get_ta_info($bind_variables);
             return $ta_package;
+        case "get_auth_info":
+            $user_info_package = get_auth_info($parameters);
+            return $user_info_package;
         default:
             throw new Exception("InvalidPage");
     }
@@ -223,6 +226,18 @@ function get_ta_info($bind_variables)
 
     $ta_package = array('TYPE' => "ta_package", 'DATA' => $data);
     return $ta_package;
+}
+
+/**
+ * This function returns shibboleth sign on data. Specifically, it returns the
+ * utorid, email and unscoped-affiliation
+ *
+ * @param parameters GET request $parameters
+ * @return array containing shibboleth environment variables
+ */
+function get_auth_info($parameters)
+{
+    return array("TYPE" => "auth_info", "DATA" => [$parameters]);
 }
 
 /**
