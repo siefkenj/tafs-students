@@ -7,6 +7,7 @@ try {
     $REQUEST_data = handle_request();
     if (isset($REQUEST_data['REQUEST_METHOD'])) {
         $method = $REQUEST_data['REQUEST_METHOD'];
+        verify_user_id($REQUEST_data);
         switch ($method) {
             case "GET":
                 print json_encode(handle_get($REQUEST_data));
