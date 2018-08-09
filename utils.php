@@ -20,7 +20,8 @@ function set_http_response($num)
         200 => 'HTTP/1.1 200 OK',
         202 => 'HTTP/1.1 202 Accepted',
         400 => 'HTTP/1.1 400 Bad Request',
-        500 => 'HTTP/1.1 500 Internal Server Error'
+        500 => 'HTTP/1.1 500 Internal Server Error',
+        401 => 'HTTP/1.1 401 Unauthorized Access'
     );
     header($http[$num]);
     return array('CODE' => $num, 'ERROR' => $http[$num]);
@@ -148,4 +149,25 @@ function normalize_term($term)
         return $year . "9";
     }
     return ($year - 1) . "9";
+}
+
+/**
+ * Function checks if user_id and utorid match. If not, returns 401 error
+ *
+ * @throws 401 Unauthorized Access
+ */
+function verify_user_id($params)
+{
+    if (!isset($params['user_id'])) {
+        $params['user_id'] = $params['auth']['utor_id'];
+    }
+
+    if (
+        $params['auth']['utorid'] != null &&
+        $params['auth']['utorid'] != $params['user_id']
+    ) {
+        $result = set_http_response(401);
+        print json_encode($result, JSON_PRETTY_PRINT);
+        exit();
+    }
 }
