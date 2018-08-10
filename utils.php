@@ -159,7 +159,7 @@ function normalize_term($term)
 function verify_user_id($params)
 {
     if (!isset($params['user_id'])) {
-        $params['user_id'] = $params['auth']['utor_id'];
+        $params['user_id'] = $params['auth']['utorid'];
     }
 
     if (
